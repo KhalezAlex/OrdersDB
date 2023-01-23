@@ -34,9 +34,9 @@ public class ItemController {
     }
 
     @PostMapping("/update")
-    public Item update(@RequestParam Integer id, @RequestParam(required = false) String itemName,
+    public ItemDTO update(@RequestParam Integer id, @RequestParam(required = false) String itemName,
                        @RequestParam(required = false) Long itemArticle, @RequestParam(required = false) int price) {
-        return daoItem.update(new Item(id, itemName, itemArticle, price));
+        return new ItemDTO(daoItem.update(new Item(id, itemName, itemArticle, price)));
     }
 
     @GetMapping("/delete")

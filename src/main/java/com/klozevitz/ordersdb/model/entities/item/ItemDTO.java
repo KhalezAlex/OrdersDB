@@ -1,6 +1,7 @@
 package com.klozevitz.ordersdb.model.entities.item;
 
 import com.klozevitz.ordersdb.model.entities.ordersItems.OrdersItems;
+import com.klozevitz.ordersdb.model.entities.ordersItems.OrdersItemsDTO;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,8 @@ public class ItemDTO {
     private String itemName;
     private Long itemArticle;
     private int price;
-    private Set<Integer> orderItemsId = new HashSet<>();
+    private Set<OrdersItemsDTO> orderItems = new HashSet<>();
+//    private Set<Integer> orderItemsId = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -44,12 +46,12 @@ public class ItemDTO {
         this.price = price;
     }
 
-    public Set<Integer> getOrderItemsId() {
-        return orderItemsId;
+    public Set<OrdersItemsDTO> getOrderItemsId() {
+        return orderItems;
     }
 
-    public void setOrderItemsId(Set<Integer> orderItemsId) {
-        this.orderItemsId = orderItemsId;
+    public void setOrderItemsId(Set<OrdersItemsDTO> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public ItemDTO() {
@@ -62,6 +64,6 @@ public class ItemDTO {
         this.price = item.getPrice();
         if (item.getOrderItems() != null)
             for (OrdersItems oi: item.getOrderItems())
-                this.orderItemsId.add(oi.getId());
+                this.orderItems.add(new OrdersItemsDTO(oi));
     }
 }

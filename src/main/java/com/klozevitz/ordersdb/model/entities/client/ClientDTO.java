@@ -1,6 +1,7 @@
 package com.klozevitz.ordersdb.model.entities.client;
 
 import com.klozevitz.ordersdb.model.entities.order.Order;
+import com.klozevitz.ordersdb.model.entities.order.OrderDTO;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,8 @@ public class ClientDTO {
 
     private String clientName;
 
-    private Set<Integer> ordersId = new HashSet<>();
+    private Set<OrderDTO> orders = new HashSet<>();
+//    private Set<Integer> ordersId = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -28,12 +30,12 @@ public class ClientDTO {
         this.clientName = clientName;
     }
 
-    public Set<Integer> getOrdersId() {
-        return ordersId;
+    public Set<OrderDTO> getOrdersId() {
+        return orders;
     }
 
-    public void setOrdersId(Set<Integer> ordersId) {
-        this.ordersId = ordersId;
+    public void setOrdersId(Set<OrderDTO> ordersId) {
+        this.orders = ordersId;
     }
 
     public ClientDTO(Client client) {
@@ -41,7 +43,7 @@ public class ClientDTO {
         this.clientName = client.getClientName();
         if (client.getOrders() != null)
             for (Order order: client.getOrders())
-                this.ordersId.add(order.getId());
+                this.orders.add(new OrderDTO(order));
     }
 
     public ClientDTO() {}
@@ -51,7 +53,7 @@ public class ClientDTO {
         return "{" +
                 "id=" + id +
                 ", clientName='" + clientName + '\'' +
-                ", ordersId=" + ordersId +
+                ", ordersId=" + orders +
                 '}';
     }
 }

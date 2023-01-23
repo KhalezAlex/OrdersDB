@@ -55,16 +55,7 @@ public class OrdersItemsService implements IDaoOrdersItems {
     private OrdersItems updateOI(OrdersItems oi) {
         OrdersItems oiToUpdate = oiRep.findById(oi.getId()).orElse(null);
         assert oiToUpdate != null;
-        if (!Objects.equals(oiToUpdate.getItem(), oi.getItem())) {
-            oiToUpdate.getItem().getOrderItems().remove(oiToUpdate);
-            oiToUpdate.setItem(oi.getItem());
-        }
-        if (!Objects.equals(oiToUpdate.getOrder(), oi.getOrder())) {
-            oiToUpdate.getOrder().getOrderItems().remove(oiToUpdate);
-            oiToUpdate.setOrder(oi.getOrder());
-        }
-        if (!Objects.equals(oiToUpdate.getQuantity(), oi.getQuantity()))
-            oiToUpdate.setQuantity(oi.getQuantity());
+        oiToUpdate.setQuantity(oi.getQuantity());
         return oiToUpdate;
     }
 

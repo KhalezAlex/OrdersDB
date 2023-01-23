@@ -2,8 +2,10 @@ package com.klozevitz.ordersdb.controllers;
 
 import com.klozevitz.ordersdb.model.dao.services.client.IDaoClient;
 import com.klozevitz.ordersdb.model.dao.services.order.IDaoOrder;
+import com.klozevitz.ordersdb.model.entities.client.Client;
 import com.klozevitz.ordersdb.model.entities.order.Order;
 import com.klozevitz.ordersdb.model.entities.order.OrderDTO;
+import com.klozevitz.ordersdb.model.entities.order.OrderReportDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,22 +38,23 @@ public class OrderController {
         return new OrderDTO(daoOrder.save(new Order(description, daoClient.findById(clientId))));
     }
 
-//    @PostMapping("/update")
-//    public Order update(@RequestParam Integer orderId, @RequestParam (required = false) String description,
-//                        @RequestParam (required = false) Integer clientId) {
-//        if (daoOrder.findById(orderId).isEmpty())
-//            return null;
-//        Order order = daoOrder.findById(orderId).get();
-//        if (description != null)
-//            order.setDescription(description);
-//        if (clientId != null)
-//            if (daoClient.findById(clientId).isPresent())
-//                order.setClient(daoClient.findById(clientId).get());
-//        return daoOrder.update(order);
-//    }
+    @PostMapping("/update")
+    public OrderDTO update(@RequestParam Integer id, @RequestParam (required = false) String description) {
+        return new OrderDTO(daoOrder.update(new Order(id, description, new Client())));
+    }
 
     @GetMapping("/delete")
     public OrderDTO delete(@RequestParam Integer id) {
         return new OrderDTO(daoOrder.delete(id));
+    }
+
+    @GetMapping("/info")
+    public OrderReportDTO orderInfo(@RequestParam int id) {
+        return daoOrder.orderInfo(id);
+    }
+
+    @GetMapping("/check")
+    public List<String> check(@RequestParam int id) {
+        return daoOrder.check(id);
     }
 }

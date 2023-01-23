@@ -45,7 +45,10 @@ public class OrdersItemsController {
                                             daoItem.findById(itemId), daoOrder.findById(orderId))));
     }
 
-
+    @PostMapping("/update")
+    public OrdersItemsDTO update(@RequestParam int id, @RequestParam int quantity) {
+        return new OrdersItemsDTO(daoOI.update(new OrdersItems(id, quantity)));
+    }
 
     @PostMapping("/delete")
     public OrdersItemsDTO delete(@RequestParam int id) {

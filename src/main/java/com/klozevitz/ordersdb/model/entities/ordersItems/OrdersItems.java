@@ -43,6 +43,11 @@ public class OrdersItems {
         this.order = order;
     }
 
+    public OrdersItems(Integer id, Integer quantity) {
+        this.id = id;
+        this.quantity = quantity;
+    }
+
     public Integer getId() {
         return id;
     }

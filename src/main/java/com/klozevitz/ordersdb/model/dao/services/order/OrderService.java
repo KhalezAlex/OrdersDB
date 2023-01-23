@@ -1,6 +1,9 @@
 package com.klozevitz.ordersdb.model.dao.services.order;
 
+import com.klozevitz.ordersdb.model.entities.item.Item;
+import com.klozevitz.ordersdb.model.entities.item.ItemDTO;
 import com.klozevitz.ordersdb.model.entities.order.Order;
+import com.klozevitz.ordersdb.model.entities.order.OrderReportDTO;
 import com.klozevitz.ordersdb.model.entities.ordersItems.OrdersItems;
 import com.klozevitz.ordersdb.model.repositories.IClientRepository;
 import com.klozevitz.ordersdb.model.repositories.IItemRepository;
@@ -10,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
 
 @Service
 public class OrderService implements IDaoOrder {
@@ -56,16 +59,7 @@ public class OrderService implements IDaoOrder {
         Order orderToUpdate = orderRep.findById(order.getId()).orElse(null);
         assert orderToUpdate != null;
         orderToUpdate.setDescription(order.getDescription());
-        updateClient(orderToUpdate, order);
-        return orderToUpdate;
-    }
-
-    private void updateClient(Order orderToUpdate, Order order) {
-        if (Objects.equals(orderToUpdate.getClient().getId(), order.getClient().getId()))
-            return;
-        clientRep.findById(orderToUpdate.getClient().getId()).get().getOrders().remove(orderToUpdate);
-        orderToUpdate.setClient(order.getClient());
-        clientRep.findById(order.getClient().getId()).get().getOrders().add(orderToUpdate);
+       return orderToUpdate;
     }
 
     @Override
@@ -73,7 +67,6 @@ public class OrderService implements IDaoOrder {
         Order order = orderRep.findById(id).orElse(null);
         if (order == null)
             return new Order();
-        System.out.println("*******************************************");
         clientRep.findById(order.getClient().getId()).get().getOrders().remove(order);
         deleteOrdersItems(order);
         orderRep.deleteById(id);
@@ -86,4 +79,53 @@ public class OrderService implements IDaoOrder {
             oiRep.delete(oi);
         }
     }
+
+    public OrderReportDTO orderInfo(int id) {
+        Order order = orderRep.findById(id).orElse(null);
+        if (order == null)
+            return  new OrderReportDTO();
+        OrderReportDTO orderReportDTO = new OrderReportDTO(order);
+//        Map<String, Integer> map = new HashMap<>();
+        for (OrdersItems oi: oiRep.findAllByOrder(order)) {
+            ItemDTO item = new ItemDTO(itemRep.findById(oi.getItem().getId()).orElse(new Item()));
+            orderReportDTO.getItems().put(item.getId().toString().concat(": ").concat(item.getItemName()),
+                                            oi.getQuantity());
+        }
+//        orderReportDTO.setItems(map);
+        return orderReportDTO;
+    }
+
+    @Override
+    public List<String> check(int id) {
+        Order order = orderRep.findById(id).orElse(null);
+        if (order == null)
+            return new LinkedList<>();
+        int finalPrice = 0;
+        List<String> list = new LinkedList<>();
+        for (OrdersItems oi: oiRep.findAllByOrder(order)) {
+            finalPrice += oi.getItem().getPrice() * oi.getQuantity();
+            ItemDTO item = new ItemDTO(itemRep.findById(oi.getItem().getId()).orElse(new Item()));
+            list.add(item.getItemName().concat(": ").concat(String.valueOf(oi.getQuantity()).concat(" items")));
+        }
+        list.add("Final price: ".concat(String.valueOf(finalPrice)));
+        return list;
+    }
 }
+
+
+
+//    public Map<String, Integer> check(int id) {
+//        Order order = orderRep.findById(id).orElse(null);
+//        if (order == null)
+//            return new HashMap<>();
+//        int finalPrice = 0;
+//        Map<String, Integer> map = new HashMap<>();
+//        for (OrdersItems oi: oiRep.findAllByOrder(order)) {
+//            finalPrice += oi.getItem().getPrice() * oi.getQuantity();
+//            ItemDTO item = new ItemDTO(itemRep.findById(oi.getItem().getId()).orElse(new Item()));
+//            map.put(item.getItemName(), oi.getQuantity());
+//        }
+//        map.put("Final price: ", finalPrice);
+//        System.out.println(map);
+//        return map;
+//    }

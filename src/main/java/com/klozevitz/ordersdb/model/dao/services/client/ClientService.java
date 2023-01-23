@@ -1,7 +1,6 @@
 package com.klozevitz.ordersdb.model.dao.services.client;
 
 import com.klozevitz.ordersdb.model.entities.client.Client;
-import com.klozevitz.ordersdb.model.entities.order.Order;
 import com.klozevitz.ordersdb.model.repositories.IClientRepository;
 import com.klozevitz.ordersdb.model.repositories.IOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +41,9 @@ public class ClientService implements IDaoClient {
 
     private Client updateClient(Client client) {
         Client clientToUpdate = clientRep.findById(client.getId()).orElse(null);
-        assert clientToUpdate != null;
-        if (client.getClientName() != null)
-            clientToUpdate.setClientName(client.getClientName());
-//        if (client.getOrders() != null)
-//            clientToUpdate.setOrders(client.getOrders());
+        if (clientToUpdate == null)
+            return new Client();
+        clientToUpdate.setClientName(client.getClientName());
         return clientToUpdate;
     }
 
